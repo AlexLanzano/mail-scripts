@@ -17,6 +17,10 @@ def main():
     message_id = mail.get("Message-ID")
     mailbox = mail.get("X-getmail-retrieved-from-mailbox")
 
+    md5_hash = hashlib.md5()
+    md5_hash.update(message_id.encode('utf-8'))
+    md5_digest = md5_hash.hexdigest()
+
     mailbox_path = os.path.join(mail_base, mailbox, 'new')
     if not os.path.isdir(mailbox_path):
         cur = os.path.join(mail_base, mailbox, 'cur')
@@ -26,6 +30,6 @@ def main():
         os.makedirs(cur)
         os.makedirs(tmp)
 
-    with open(os.path.join(mailbox_path, message_id), 'wb') as f:
+    with open(os.path.join(mailbox_path, md5_digest + '.txt'), 'wb') as f:
         f.write(mail_bytes)
 main()
